@@ -65,11 +65,3 @@ To deactivate the virtual environment when you're done working on the project:
 ```bash
 deactivate
 ```
-
-## Contributing
-
-We welcome contributions from UF students and developers interested in improving course selection processes. As the project develops, we'll provide more detailed contribution guidelines.
-
----
-
-*This project is being developed by UF students, for UF students.*
