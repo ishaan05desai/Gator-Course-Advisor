@@ -31,4 +31,4 @@ acadStage       | int           | 0 for undergrad 1 for grad  | 0
 # Cleaning Notes
 - Instructor names - differentiate between TA, actual professor or head of course.
 - Some courses and professor do NOT have a RateMyProfessor data.
-- differet places and times.
+- Different places (buildings) and times.
