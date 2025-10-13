@@ -1,0 +1,59 @@
+Example of how a single course is stored in data
+{
+  'COURSES': [
+    {
+      'code': 'CAP3027',
+      'courseId': '024718',
+      'name': 'Introduction to Computational Media',
+      'openSeats': None,
+      'termInd': ' ',
+      'description': (
+          'Examines the tools, technologies, and programming techniques used to make visually-oriented applications. '
+          'Topics include the foundational elements of both 2D and 3D graphics, content creation tools, and the intersection of art and computing.'
+      ),
+      'prerequisites': 'Prereq: COP 3504 or COP 3503.',
+      'sections': [
+        {
+          'number': '1UFO',
+          'classNumber': 22747,
+          'gradBasis': 'GRD',
+          'acadCareer': 'UGRD',
+          'display': 'Intro Computational Media',
+          'credits': 3,
+          'credits_min': 3,
+          'credits_max': 3,
+          'note': '',
+          'dNote': '',
+          'genEd': [],
+          'quest': [],
+          'sectWeb': 'AD',
+          'rotateTitle': '',
+          'deptCode': 19140000,
+          'deptName': 'Computer & Information Science & Engineering',
+          'openSeats': None,
+          'courseFee': 0,
+          'lateFlag': 'N',
+          'EEP': 'Y',
+          'LMS': '',
+          'instructors': [
+            {'name': 'Joshua Fox'}
+          ],
+          'meetTimes': [],
+          'addEligible': 'Y',
+          'grWriting': 'N',
+          'finalExam': '',
+          'dropaddDeadline': '01/17/2025',
+          'pastDeadline': True,
+          'startDate': '01/13/2025',
+          'endDate': '04/23/2025',
+          'waitList': {
+            'isEligible': 'N',
+            'cap': 0,
+            'total': 0
+          }
+        }
+      ]
+    }
+  ]
+}
+
