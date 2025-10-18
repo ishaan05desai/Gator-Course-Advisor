@@ -4,7 +4,7 @@ import csv
 from DeptCodes import dept_codes
 
 # For term number, the first 3 digits represents year. 225 = 2025. Last digit is season. 1 = Spring, 5 = Summer, 8 = Fall. 2258 = Fall 2025
-# departments should match key values in DeptCodes.py file
+# The departments list should contain key values from the DeptCodes.py file
 def writeDeptData(term: int, departments: List[str]): 
 
     #All data storage lists
@@ -56,4 +56,4 @@ def writeDeptData(term: int, departments: List[str]):
             csvwriter.writerow([course_codes[i], course_names[i], course_descriptions[i], course_prerequisites[i], 
                                 course_instructors[i], course_meet_times[i], course_credit_hours[i], course_department[i]])
 
-writeDeptData(2255, ["Advertising", "Music", "Zoology"])
+writeDeptData(2258, ["Chemical Engineering", "Computer & Information Science & Engineering", "History", "English"])
