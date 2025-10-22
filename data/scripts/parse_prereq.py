@@ -14,7 +14,7 @@ def extract_prereqs(prereq):
         return []
     
     #find everything after "Prereq: "
-    match = re.search(r"(?<=Prereq: )(.*)", prereq, re.I)
+    match = re.search(r"(?:(?<=Prereq: )|(?<=Coreq: ))(.*)", prereq, re.I)
 
     if not match:
         return []
