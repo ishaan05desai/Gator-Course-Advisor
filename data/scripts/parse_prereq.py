@@ -1,12 +1,8 @@
 import pandas as pd
 import re
 from pathlib import Path
+from collections import Counter
 
-csv_path = Path(__file__).resolve().parents[2] / 'CourseData.csv'
-
-# Read the CSV file
-course_data = pd.read_csv(csv_path, usecols=['Prerequisites'])
-    
 def extract_prereqs(prereq):
     # If nothing is listed as a prerequisite
     if pd.isna(prereq):
@@ -39,10 +35,30 @@ def extract_prereqs(prereq):
 
     return cleaned
 
-# Iterate over the 'Prerequisites' column and call the function. Printing the results
-for prereq_string in course_data['Prerequisites']:
-    extracted_prereqs = extract_prereqs(prereq_string)
-    print(extracted_prereqs)
+# Gets frequency of each prereq in CourseData.csv using extract_prereqs()
+def get_prereq_frequency():
+    csv_path = Path(__file__).resolve().parents[1] / 'output' / 'CourseData.csv'
+    output_path = Path(__file__).resolve().parents[1] / 'output' / 'prereq_frequency.csv'
+
+    course_data = pd.read_csv(csv_path, usecols=['Prerequisites'])
+    parsed_prereqs = course_data['Prerequisites'].apply(extract_prereqs)
+
+    # Creating one list of all prereqs to call Counter on
+    all_prereqs = [prereq for sublist in parsed_prereqs for prereq in sublist]
+
+    prereq_frequency = Counter(all_prereqs)
+
+    df_prereqs = pd.DataFrame(prereq_frequency.items(), columns=['Prerequisite', 'Frequency'])
+    df_prereqs = df_prereqs.sort_values(by='Frequency', ascending=False)
+    df_prereqs.to_csv(output_path, index=False)
+
+    print("Prerequisite frequency data saved to:", output_path)
+
+
+# # Iterate over the 'Prerequisites' column and call the function. Printing the results
+# for prereq_string in course_data['Prerequisites']:
+#     extracted_prereqs = extract_prereqs(prereq_string)
+#     print(extracted_prereqs)
 
 # Iterate over the 'Prerequisites' column and call the function. Returning a list of lists
 # onlyprereqs = []
