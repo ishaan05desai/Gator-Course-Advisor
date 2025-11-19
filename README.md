@@ -65,3 +65,50 @@ To deactivate the virtual environment when you're done working on the project:
 ```bash
 deactivate
 ```
+
+## Running the Semantic Search Feature
+
+The Gator Course Advisor includes a content-based recommendation system that uses BERT sentence embeddings to help you find courses based on natural language descriptions.
+
+### Installing ML Dependencies
+
+After setting up your virtual environment (see steps above), install the required machine learning libraries:
+
+```bash
+pip install sentence-transformers scikit-learn pandas numpy
+```
+
+These packages include:
+- `sentence-transformers`: BERT-based semantic search model
+- `scikit-learn`: For cosine similarity calculations
+- `pandas`: Data processing
+- `numpy`: Numerical operations
+
+### Running Semantic Search
+
+Once the dependencies are installed, you can run the semantic search tool:
+
+```bash
+python semantic_search.py
+```
+
+or on Mac/Linux:
+
+```bash
+python3 semantic_search.py
+```
+
+### How to Use
+
+The semantic search tool allows you to describe what you're looking for in natural language, and it will recommend the most relevant UF courses.
+
+**Example queries:**
+- "I want a beginner AI class with python"
+- "Upper-level data science course with lots of projects"
+- "Easy humanities gen-ed that focuses on culture and history"
+
+The tool will display the top 5 matching courses with their descriptions, departments, and similarity scores.
+
+To exit the tool, type `q`, `quit`, or `exit`.
+
+**Note**: Make sure `CourseData.csv` is present in the project directory before running the semantic search feature.
