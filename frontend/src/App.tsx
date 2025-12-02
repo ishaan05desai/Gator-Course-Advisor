@@ -26,7 +26,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === '
 // Fetch course recommendations from the semantic search API
 const fetchCourseRecommendations = async (
   userInput: string,
-  topK: number = 5
+  topK: number = 3
 ): Promise<{ content: string; courses: Course[] }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/search`, {
@@ -193,7 +193,7 @@ function App() {
     setMessages((prev) => [...prev, thinkingMessage]);
 
     // Fetch recommendations from API
-    fetchCourseRecommendations(trimmedInput, 5)
+    fetchCourseRecommendations(trimmedInput, 3)
       .then(({ content, courses }) => {
         const response: Message = {
           id: (Date.now() + 2).toString(),
