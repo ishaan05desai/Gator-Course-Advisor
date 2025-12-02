@@ -112,3 +112,62 @@ The tool will display the top 5 matching courses with their descriptions, depart
 To exit the tool, type `q`, `quit`, or `exit`.
 
 **Note**: Make sure `CourseData.csv` is present in the project directory before running the semantic search feature.
+
+## Running the Full Application (Frontend + Backend API)
+
+The Gator Course Advisor now includes a web interface that connects to a semantic search API backend.
+
+### Backend API Setup
+
+1. **Install Python Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Start the API Server**:
+   ```bash
+   python api_server.py
+   ```
+   
+   The server will start on `http://localhost:5000`. The first run will take some time as it loads the BERT model and processes course embeddings.
+
+3. **Verify the API is Running**:
+   - Visit `http://localhost:5000/api/health` in your browser
+   - You should see a JSON response with the server status
+
+### Frontend Setup
+
+1. **Navigate to the frontend directory**:
+   ```bash
+   cd frontend
+   ```
+
+2. **Install Node.js dependencies** (if not already installed):
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
+
+   The frontend will start on `http://localhost:5173` (or another port if 5173 is busy).
+
+4. **Access the Application**:
+   - Open your browser and navigate to the URL shown in the terminal (typically `http://localhost:5173`)
+   - The frontend will automatically connect to the API server running on port 5000
+
+### API Endpoints
+
+- `GET /api/health` - Health check endpoint
+- `POST /api/search` - Search for courses
+  - Request body: `{ "query": "your search query", "top_k": 5 }`
+  - Returns: List of matching courses with similarity scores
+- `GET /api/courses` - Get all courses (optional `?limit=number` query parameter)
+
+### Troubleshooting
+
+- **Frontend can't connect to API**: Make sure the API server is running on port 5000
+- **Model loading takes time**: The first API request will be slow as the BERT model loads. Subsequent requests will be faster.
+- **CORS errors**: The API server has CORS enabled, but if you encounter issues, make sure both servers are running
