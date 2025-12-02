@@ -18,164 +18,55 @@ interface ChatSession {
   messages: Message[];
 }
 
-// Mock course database with descriptions
-const courseDatabase: Record<string, Course> = {
-  "CAP 4630": {
-    code: "CAP 4630",
-    title: "Artificial Intelligence",
-    description:
-      "Covers fundamental AI concepts including search algorithms, knowledge representation, reasoning, machine learning basics, and applications of intelligent systems.",
-  },
-  "EEL 3872": {
-    code: "EEL 3872",
-    title: "AI Foundations",
-    description:
-      "Introduction to artificial intelligence principles, algorithms, and techniques. Explores problem-solving methods, heuristic search, and basic machine learning approaches.",
-  },
-  "STA 4241": {
-    code: "STA 4241",
-    title: "Machine Learning for Data Science",
-    description:
-      "Statistical learning methods for data analysis including regression, classification, clustering, and model evaluation techniques applied to real-world datasets.",
-  },
-  "COP 4813": {
-    code: "COP 4813",
-    title: "Web Application Programming",
-    description:
-      "Development of dynamic web applications using modern frameworks, client-server architecture, RESTful APIs, and database integration for full-stack solutions.",
-  },
-  "CEN 4010": {
-    code: "CEN 4010",
-    title: "Software Engineering",
-    description:
-      "Software development lifecycle, requirements analysis, design patterns, testing strategies, version control, and collaborative development practices in team environments.",
-  },
-  "COP 3530": {
-    code: "COP 3530",
-    title: "Data Structures",
-    description:
-      "Covers fundamental data structures including lists, stacks, queues, trees, graphs, and algorithmic efficiency analysis.",
-  },
-  "COP 4710": {
-    code: "COP 4710",
-    title: "Database Systems",
-    description:
-      "Database design, SQL querying, normalization, transaction management, indexing, and implementation of relational database management systems.",
-  },
-  "CAP 4770": {
-    code: "CAP 4770",
-    title: "Data Mining",
-    description:
-      "Techniques for discovering patterns in large datasets including association rules, classification, clustering, and evaluation of mining algorithms.",
-  },
-  "CIS 4361": {
-    code: "CIS 4361",
-    title: "Computer Security",
-    description:
-      "Principles of information security, threat analysis, access control, cryptography basics, network security, and secure software development practices.",
-  },
-  "CNT 4403": {
-    code: "CNT 4403",
-    title: "Network Security",
-    description:
-      "Security protocols, firewalls, intrusion detection systems, VPN technologies, and defense mechanisms for protecting network infrastructure.",
-  },
-  "CIS 4362": {
-    code: "CIS 4362",
-    title: "Applied Cryptography",
-    description:
-      "Cryptographic algorithms, symmetric and asymmetric encryption, digital signatures, hash functions, and their practical applications in secure systems.",
-  },
-  "CAP 4720": {
-    code: "CAP 4720",
-    title: "Computer Graphics",
-    description:
-      "Rendering techniques, 3D transformations, lighting models, texture mapping, and graphics programming using modern graphics APIs and shaders.",
-  },
-  "CAP 4053": {
-    code: "CAP 4053",
-    title: "Game Development",
-    description:
-      "Game design principles, game engines, physics simulation, collision detection, game AI, and development of interactive entertainment applications.",
-  },
-};
+// Note: Course data is now fetched from the API, so the mock database is no longer needed
 
-// Mock course recommendations based on user interests
-const generateMockRecommendations = (
-  userInput: string
-): { content: string; courses: Course[] } => {
-  const lowerInput = userInput.toLowerCase();
+// API endpoint - uses Vite proxy in development, or can be configured via environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'development' ? "" : "http://localhost:5000");
 
-  // Extract keywords and generate relevant courses
-  let courseCodes: string[] = [];
+// Fetch course recommendations from the semantic search API
+const fetchCourseRecommendations = async (
+  userInput: string,
+  topK: number = 5
+): Promise<{ content: string; courses: Course[] }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/search`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: userInput,
+        top_k: topK,
+      }),
+    });
 
-  if (
-    lowerInput.includes("ai") ||
-    lowerInput.includes("artificial intelligence") ||
-    lowerInput.includes("machine learning")
-  ) {
-    courseCodes.push("CAP 4630");
-    courseCodes.push("EEL 3872");
-    courseCodes.push("STA 4241");
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Convert API response to Course format
+    const courses: Course[] = data.courses.map((course: any) => ({
+      code: course.code,
+      title: course.title,
+      description: course.description,
+    }));
+
+    const interests =
+      userInput.length > 50 ? userInput.substring(0, 50) + "..." : userInput;
+    
+    return {
+      content: `Based on your interests in "${interests}", here are the top ${courses.length} matching courses:`,
+      courses,
+    };
+  } catch (error) {
+    console.error("Error fetching recommendations:", error);
+    return {
+      content: `Sorry, I encountered an error while searching for courses. Please make sure the API server is running on ${API_BASE_URL}. Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      courses: [],
+    };
   }
-
-  if (
-    lowerInput.includes("web") ||
-    lowerInput.includes("frontend") ||
-    lowerInput.includes("react")
-  ) {
-    courseCodes.push("COP 4813");
-    courseCodes.push("CEN 4010");
-    courseCodes.push("COP 3530");
-  }
-
-  if (
-    lowerInput.includes("database") ||
-    lowerInput.includes("sql") ||
-    lowerInput.includes("data")
-  ) {
-    courseCodes.push("COP 4710");
-    courseCodes.push("STA 4241");
-    courseCodes.push("CAP 4770");
-  }
-
-  if (
-    lowerInput.includes("cyber") ||
-    lowerInput.includes("security") ||
-    lowerInput.includes("hack")
-  ) {
-    courseCodes.push("CIS 4361");
-    courseCodes.push("CNT 4403");
-    courseCodes.push("CIS 4362");
-  }
-
-  if (
-    lowerInput.includes("game") ||
-    lowerInput.includes("gaming") ||
-    lowerInput.includes("graphics")
-  ) {
-    courseCodes.push("CAP 4720");
-    courseCodes.push("CAP 4053");
-    courseCodes.push("CEN 4010");
-  }
-
-  // Default recommendations if no specific match
-  if (courseCodes.length === 0) {
-    courseCodes = ["COP 3530", "CEN 4010", "CAP 4630"];
-  }
-
-  // Get unique courses and convert to Course objects
-  const uniqueCodes = Array.from(new Set(courseCodes));
-  const courses: Course[] = uniqueCodes
-    .map((code) => courseDatabase[code])
-    .filter((course): course is Course => course !== undefined);
-
-  const interests =
-    userInput.length > 50 ? userInput.substring(0, 50) + "..." : userInput;
-  return {
-    content: `Based on your interests in ${interests}:`,
-    courses,
-  };
 };
 
 function App() {
@@ -301,25 +192,42 @@ function App() {
 
     setMessages((prev) => [...prev, thinkingMessage]);
 
-    // Simulate API delay and replace with response
-    setTimeout(() => {
-      const { content, courses } = generateMockRecommendations(trimmedInput);
-      const response: Message = {
-        id: (Date.now() + 2).toString(),
-        role: "assistant",
-        content,
-        courses,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      };
+    // Fetch recommendations from API
+    fetchCourseRecommendations(trimmedInput, 5)
+      .then(({ content, courses }) => {
+        const response: Message = {
+          id: (Date.now() + 2).toString(),
+          role: "assistant",
+          content,
+          courses,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
 
-      setMessages((prev) =>
-        prev.map((msg) => (msg.id === thinkingMessage.id ? response : msg))
-      );
-      setIsThinking(false);
-    }, 1200);
+        setMessages((prev) =>
+          prev.map((msg) => (msg.id === thinkingMessage.id ? response : msg))
+        );
+        setIsThinking(false);
+      })
+      .catch((error) => {
+        console.error("Error in fetchCourseRecommendations:", error);
+        const errorResponse: Message = {
+          id: (Date.now() + 2).toString(),
+          role: "assistant",
+          content: `Sorry, I encountered an error: ${error.message}. Please make sure the API server is running.`,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+
+        setMessages((prev) =>
+          prev.map((msg) => (msg.id === thinkingMessage.id ? errorResponse : msg))
+        );
+        setIsThinking(false);
+      });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
